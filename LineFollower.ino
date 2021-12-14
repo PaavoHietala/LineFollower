@@ -6,6 +6,9 @@
 #define IRpdRight A0        // Right IR photodiode signal
 #define BlackThreshold -20  // Threshold for photodiode, on line if under this
 #define debug 0             // Enable debugging output in serial monitor
+#define motorD1 8           // Motor pin D1 (drive backwards)
+#define motorD2 9           // Motor pin D2 (drive forwards)
+
 
 void setup(){
     Serial.begin (9600);
@@ -13,6 +16,8 @@ void setup(){
     pinMode(echoPin, INPUT);
     pinMode(IRledPinLeft, OUTPUT);
     pinMode(IRledPinRight, OUTPUT);
+    pinMode(motorD1, OUTPUT); //direction
+    pinMode(motorD2, OUTPUT); //speed
 }
 
 void loop(){
@@ -87,14 +92,36 @@ char check_IR(char side){
 void driver(char left_IR, char right_IR, float distance){
     if ((left_IR == 'B' && right_IR == 'B') || distance <= 5){
         Serial.println("stop");
+        motor_ctrl("stop");
     }
     else if (left_IR == 'B' && right_IR == 'W'){
         Serial.println("Turning left");
+        motor_ctrl("rev");
     }
     else if (left_IR == 'W' && right_IR == 'B'){
         Serial.println("Turning right");
+        motor_ctrl("rev");
     }
     else{
         Serial.println("Full steam ahead");
+        motor_ctrl("fwd");
+    }
+}
+
+void motor_ctrl(char* task){
+    if (task == "fwd"){
+        Serial.println("Driving motor forward");
+        analogWrite(motorD1, LOW);
+        analogWrite(motorD2, 255);
+    }
+    else if (task == "stop"){
+        Serial.println("Stopping motor");
+        analogWrite(motorD1, LOW);
+        analogWrite(motorD2, LOW);
+    }
+    else if (task == "rev"){
+        Serial.println("Driving motor backwards");
+        analogWrite(motorD1, 255);
+        analogWrite(motorD2, LOW);
     }
 }
