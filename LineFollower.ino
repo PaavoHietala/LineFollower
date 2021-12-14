@@ -5,19 +5,26 @@
 #define IRpdLeft A1         // Left IR photodiode signal
 #define IRpdRight A0        // Right IR photodiode signal
 #define BlackThreshold -20  // Threshold for photodiode, on line if under this
-#define debug 0             // Enable debugging output in serial monitor
+#define debug 1             // Enable debugging output in serial monitor
 #define motorD1 8           // Motor pin D1 (drive backwards)
 #define motorD2 9           // Motor pin D2 (drive forwards)
+#define ServoPin 4          // Servo pin for steering
+#include <Servo.h>
 
+Servo steering;             // Steering servo
+int position = 0;           // Steering zero
 
 void setup(){
-    Serial.begin (9600);
+    Serial.begin(9600);
     pinMode(trigPin, OUTPUT);
     pinMode(echoPin, INPUT);
     pinMode(IRledPinLeft, OUTPUT);
     pinMode(IRledPinRight, OUTPUT);
     pinMode(motorD1, OUTPUT); //direction
     pinMode(motorD2, OUTPUT); //speed
+    steering.attach(ServoPin);
+    steering.write(0);
+    Serial.println("Setup completed");
 }
 
 void loop(){
@@ -96,14 +103,17 @@ void driver(char left_IR, char right_IR, float distance){
     }
     else if (left_IR == 'B' && right_IR == 'W'){
         Serial.println("Turning left");
-        motor_ctrl("rev");
+        steering.write(30);
+        motor_ctrl("fwd");
     }
     else if (left_IR == 'W' && right_IR == 'B'){
         Serial.println("Turning right");
-        motor_ctrl("rev");
+        steering.write(150);
+        motor_ctrl("fwd");
     }
     else{
         Serial.println("Full steam ahead");
+        steering.write(90);
         motor_ctrl("fwd");
     }
 }
