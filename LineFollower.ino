@@ -12,7 +12,6 @@
 #include <Servo.h>
 
 Servo steering;             // Steering servo
-int position = 0;           // Steering zero
 
 void setup(){
     Serial.begin(9600);
@@ -20,8 +19,8 @@ void setup(){
     pinMode(echoPin, INPUT);
     pinMode(IRledPinLeft, OUTPUT);
     pinMode(IRledPinRight, OUTPUT);
-    pinMode(motorD1, OUTPUT); //direction
-    pinMode(motorD2, OUTPUT); //speed
+    pinMode(motorD1, OUTPUT);
+    pinMode(motorD2, OUTPUT);
     steering.attach(ServoPin);
     steering.write(0);
     Serial.println("Setup completed");
